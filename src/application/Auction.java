@@ -1,6 +1,7 @@
 package application;
 
 import java.util.ArrayList;
+import com.tobeagile.training.ebaby.services.PostOffice;
 
 enum AuctionStatus { CREATED, STARTED, CLOSED;
 }
@@ -16,7 +17,8 @@ public class Auction {
 	private User highBidder;
 	private AuctionStatus auctionStatus = AuctionStatus.CREATED;
 	private AuctionException auctionException;
-	private ArrayList<Bid> bids = new ArrayList<Bid>();
+	public ArrayList<Bid> bids = new ArrayList<Bid>();
+	PostOffice postOffice;
 	
 	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime) {
 		this.seller = seller;
@@ -40,8 +42,20 @@ public class Auction {
 		this.setAuctionStatus(AuctionStatus.STARTED);	
 	}
 	
-	public void onClose() {
-		this.setAuctionStatus(AuctionStatus.CLOSED);
+	public boolean onClose() {
+		
+		postOffice = PostOffice.getInstance();
+		if (this.bids.size() == 0) {
+			postOffice.sendEMail(this.seller.getUserEmail(), "Sorry, your auction for " + this.getItemDescription() + " did not have any bidders.");
+			this.setAuctionStatus(AuctionStatus.CLOSED);
+			return false;
+		}
+		else {
+			postOffice.sendEMail(this.seller.getUserEmail(), "Your item " + this.getItemDescription() + " auction sold to bidder " + this.getHighBidder().getUserName() + " for " + this.getHighBid() + ".");
+			postOffice.sendEMail(this.getHighBidder().getUserEmail(), "Contratulations! You won auction for a " + this.getItemDescription() + " from " + this.seller.getUserEmail() + " for " + this.getHighBid() + ".");
+			this.setAuctionStatus(AuctionStatus.CLOSED);
+			return true;
+		}
 	}	
 
     public boolean addBid(User user, Bid bid) {

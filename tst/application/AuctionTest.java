@@ -3,8 +3,6 @@ package application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,6 +56,17 @@ public class AuctionTest {
 	    public void testOnClose() {
 	    	auction.onClose();
 	    	assertEquals(auction.getAuctionStatus(), AuctionStatus.CLOSED);
+	    	
+	    	auction.setAuctionStatus(AuctionStatus.STARTED);
+	    	auction.bids.clear();
+	    	assertFalse(auction.onClose()); // zero bids
+	    	
+	    	auction.setAuctionStatus(AuctionStatus.STARTED);
+	    	bid.setAmount(105);
+	    	user2.setLogged(true);
+	    	auction.addBid(user2,bid);
+	    	assertTrue(auction.onClose()); // sold
+	    	
 	    }
 	    
 	    @Test
@@ -71,6 +80,5 @@ public class AuctionTest {
 	    	bid.setAmount(105);
 	    	assertTrue(auction.addBid(user2, bid)); // bid processed
 	    }
-	    
 	    
 }
