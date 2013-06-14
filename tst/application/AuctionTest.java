@@ -122,4 +122,33 @@ public class AuctionTest {
 	    	
 	    }
 	    
+	    @Test
+	    public void testLogCarSales(){
+	    	auction_car.onStart();
+	    	user2.setLogged(true);
+	    	auction_car.addBid(user2, bid2);
+	    	auction_car.addBid(user2, bid3); // 30000
+	    	auction_car.onClose();
+	    	auction_car.calculateFee();
+	    	assertTrue(auction_car.logSales());
+	    }
+	    	    
+	    @Test
+	    public void testLogSalesOver10k(){
+	    	auction_sw.onStart();
+	    	user2.setLogged(true);
+	    	auction_sw.addBid(user2, bid2);
+	    	auction_sw.addBid(user2, bid3); // 30000
+	    	auction_sw.onClose();
+	    	auction_sw.calculateFee();
+	    	assertTrue(auction_sw.logSales());
+	    }
+	    
+	    @Test
+	    public void testLogNoSales(){
+	    	auction.onStart();
+	    	auction.onClose();
+	    	assertFalse(auction.logSales());
+	    }
+	    
 }

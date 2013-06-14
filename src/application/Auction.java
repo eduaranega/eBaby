@@ -2,6 +2,7 @@ package application;
 
 import java.util.ArrayList;
 import com.tobeagile.training.ebaby.services.PostOffice;
+import com.tobeagile.training.ebaby.services.AuctionLogger;
 
 enum AuctionStatus { CREATED, STARTED, CLOSED;
 }
@@ -110,6 +111,28 @@ public class Auction {
 		else return fee+= 10;*/
 	}
 	
+	public boolean logSales(){
+		if(itemtype==ItemType.CAR){
+			AuctionLogger al=AuctionLogger.getInstance();
+			al.log("CarSales.txt", buildMessage());
+		    return al.findMessage("CarSales.txt", buildMessage());
+		}
+		
+		if (highBid > 10000) {
+			AuctionLogger al=AuctionLogger.getInstance();
+			al.log("10kSales.txt", buildMessage());
+			return al.findMessage("10kSales.txt", buildMessage());
+		}
+		return false;
+	}
+	
+	public String buildMessage()
+	{
+		String temp="";
+		temp+="Seller:"+seller.getUserName()+" Item Name:"+itemDescription;
+		temp+=" Amount:"+highBid+" High Bidder:"+highBidder.getUserName();
+		return temp;
+	}
     
     /* below here are gets and sets */
 	
