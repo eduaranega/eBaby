@@ -19,6 +19,8 @@ public class Auction {
 	private AuctionException auctionException;
 	public ArrayList<Bid> bids = new ArrayList<Bid>();
 	PostOffice postOffice;
+	//NotificationFactory notificationFactory;
+	Notification notification;
 	
 	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime) {
 		this.seller = seller;
@@ -44,18 +46,19 @@ public class Auction {
 	
 	public boolean onClose() {
 		
-		postOffice = PostOffice.getInstance();
-		if (this.bids.size() == 0) {
-			postOffice.sendEMail(this.seller.getUserEmail(), "Sorry, your auction for " + this.getItemDescription() + " did not have any bidders.");
+		// call NotificationFactory to get a new Notification instance
+		notification = NotificationFactory.getNotification(this);
+		notification.notify(this);
+		
+		if (notification instanceof NotifyNoWinner) {
 			this.setAuctionStatus(AuctionStatus.CLOSED);
 			return false;
 		}
-		else {
-			postOffice.sendEMail(this.seller.getUserEmail(), "Your item " + this.getItemDescription() + " auction sold to bidder " + this.getHighBidder().getUserName() + " for " + this.getHighBid() + ".");
-			postOffice.sendEMail(this.getHighBidder().getUserEmail(), "Contratulations! You won auction for a " + this.getItemDescription() + " from " + this.seller.getUserEmail() + " for " + this.getHighBid() + ".");
+		else if (notification instanceof NotifyWinner) {
 			this.setAuctionStatus(AuctionStatus.CLOSED);
 			return true;
-		}
+		}		
+		return false;
 	}	
 
     public boolean addBid(User user, Bid bid) {
