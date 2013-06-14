@@ -2,7 +2,6 @@ package application;
 
 import java.util.ArrayList;
 import com.tobeagile.training.ebaby.services.PostOffice;
-import com.tobeagile.training.ebaby.services.AuctionLogger;
 
 enum AuctionStatus { CREATED, STARTED, CLOSED;
 }
@@ -18,7 +17,6 @@ public class Auction {
 	private double highBid;
 	private long startTime;
 	private long endTime;
-	private long now;
 	private User highBidder;
 	private AuctionStatus auctionStatus = AuctionStatus.CREATED;
 	private AuctionException auctionException;
@@ -26,7 +24,6 @@ public class Auction {
 	PostOffice postOffice;
 	Notification notification;
 	public ItemType itemtype;
-	private double fee;
 	
 	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime, ItemType itemtype) {
 		this.seller = seller;
@@ -53,8 +50,8 @@ public class Auction {
 	
 	public boolean onClose() {
 		
-		// call NotificationFactory to get a new Notification instance
-		notification = NotificationFactory.getNotification(this);
+		// call Factory to get a new Notification instance
+		notification = Factory.getNotification(this);
 		notification.notify(this);
 		
 		if (notification instanceof NotifyNoWinner) {
@@ -87,14 +84,18 @@ public class Auction {
     
 
 	public double calculateFee() {
+		
 		double fee = this.getHighBid() * 0.02 + this.getHighBid();
-		ShippingFee sf=FeeFactory.calculateShippingFee(this);
+		
+		// call Factory to get a new ShipptingFee instance
+		ShippingFee sf=Factory.calculateShippingFee(this);
 		fee=sf.calculateShippingFee(fee);
-		LuxuryFee lf=FeeFactory.calculateLuxFee(this);
+		// call Factory to get a LuxuryFee instance
+		LuxuryFee lf=Factory.calculateLuxFee(this);
 		fee=lf.calculateLuxFee(fee);
 		return fee;
 		
-		/*
+		/* code before re-factory
 		double fee = this.getHighBid() * 0.02 + this.getHighBid();
 		
 		if (this.itemtype == ItemType.DOWNLOAD_SW) {
@@ -112,6 +113,10 @@ public class Auction {
 	}
 	
 	public boolean logSales(){
+		Logger l=Factory.logSales(this);
+		return l.logSales(this);
+		
+		/* code before re-factory
 		if(itemtype==ItemType.CAR){
 			AuctionLogger al=AuctionLogger.getInstance();
 			al.log("CarSales.txt", buildMessage());
@@ -123,7 +128,7 @@ public class Auction {
 			al.log("10kSales.txt", buildMessage());
 			return al.findMessage("10kSales.txt", buildMessage());
 		}
-		return false;
+		return false;*/
 	}
 	
 	public String buildMessage()
@@ -174,14 +179,6 @@ public class Auction {
 
 	public void setEndTime(long endTime) {
 		this.endTime = endTime;
-	}
-
-	public long getNow() {
-		return now;
-	}
-
-	public void setNow(long now) {
-		this.now = now;
 	}
 
 	public User getHighBidder() {

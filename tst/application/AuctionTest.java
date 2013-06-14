@@ -15,17 +15,21 @@ public class AuctionTest {
 	
 	    @Before
 	    public void setup() {
+	    	
 	    	user = User.getInstance("dummy", "Dummy", "dummy@yahoo.com", "dummyid", "dummypasswd");
 	    	user.setSeller(true);
 	    	user.setLogged(true);
+	    	
 	        auction = Auction.getInstance(user,"Atari 2600",100.00,06132013,06142013,ItemType.OTHER);
 	        auction_car = Auction.getInstance(user,"Corolla",15000.00,06132013,06142013,ItemType.CAR);
 	        auction_sw = Auction.getInstance(user,"Game",50.00,06132013,06142013,ItemType.DOWNLOAD_SW);
+	        
 	        bid = Bid.getInstance(user, 95, 06132013);
 	        bid2 = Bid.getInstance(user, 20000, 06132013);
 	        bid3 = Bid.getInstance(user, 30000, 06132013);
 	        bid4 = Bid.getInstance(user, 51000, 06132013);
-	    	user2 = User.getInstance("dummy2", "Dummy2", "dummy2@yahoo.com", "dummy2id", "dummy2passwd");
+	    	
+	        user2 = User.getInstance("dummy2", "Dummy2", "dummy2@yahoo.com", "dummy2id", "dummy2passwd");
 	    	user3 = User.getInstance("dummy3", "Dummy3", "dummy3@yahoo.com", "dummy3id", "dummy3passwd");
 	    }
 	    
