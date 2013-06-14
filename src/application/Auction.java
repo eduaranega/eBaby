@@ -24,7 +24,7 @@ public class Auction {
 	public ArrayList<Bid> bids = new ArrayList<Bid>();
 	PostOffice postOffice;
 	Notification notification;
-	private ItemType itemtype;
+	public ItemType itemtype;
 	private double fee;
 	
 	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime, ItemType itemtype) {
@@ -87,6 +87,14 @@ public class Auction {
 
 	public double calculateFee() {
 		double fee = this.getHighBid() * 0.02 + this.getHighBid();
+		ShippingFee sf=FeeFactory.calculateShippingFee(this);
+		fee=sf.calculateShippingFee(fee);
+		LuxuryFee lf=FeeFactory.calculateLuxFee(this);
+		fee=lf.calculateLuxFee(fee);
+		return fee;
+		
+		/*
+		double fee = this.getHighBid() * 0.02 + this.getHighBid();
 		
 		if (this.itemtype == ItemType.DOWNLOAD_SW) {
 			return fee;
@@ -99,8 +107,9 @@ public class Auction {
 			}
 			return fee;
 		}
-		else return fee+= 10;
+		else return fee+= 10;*/
 	}
+	
     
     /* below here are gets and sets */
 	
