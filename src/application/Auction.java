@@ -6,10 +6,14 @@ import com.tobeagile.training.ebaby.services.PostOffice;
 enum AuctionStatus { CREATED, STARTED, CLOSED;
 }
 
+enum ItemType { CAR, DOWNLOAD_SW, OTHER;
+}
+
 public class Auction {
 	
 	private User seller;
 	private String itemDescription;
+	
 	private double highBid;
 	private long startTime;
 	private long endTime;
@@ -19,10 +23,11 @@ public class Auction {
 	private AuctionException auctionException;
 	public ArrayList<Bid> bids = new ArrayList<Bid>();
 	PostOffice postOffice;
-	//NotificationFactory notificationFactory;
 	Notification notification;
+	private ItemType itemtype;
+	private double fee;
 	
-	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime) {
+	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime, ItemType itemtype) {
 		this.seller = seller;
         if(!this.seller.isSeller()) {
         	AuctionException.getInstance("Only registered sellers can create new auctions");
@@ -34,10 +39,11 @@ public class Auction {
 		this.highBid = highBid;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.itemtype = itemtype;
 	}
 	
-	public static Auction getInstance(User seller, String itemDescription, double highBid, long startTime, long endTime) {
-		return new Auction(seller, itemDescription, highBid, startTime, endTime);
+	public static Auction getInstance(User seller, String itemDescription, double highBid, long startTime, long endTime, ItemType itemtype) {
+		return new Auction(seller, itemDescription, highBid, startTime, endTime, itemtype);
 	}
 	
 	public void onStart() {
@@ -77,6 +83,24 @@ public class Auction {
         
         return false;
     }
+    
+
+	public double calculateFee() {
+		double fee = this.getHighBid() * 0.02 + this.getHighBid();
+		
+		if (this.itemtype == ItemType.DOWNLOAD_SW) {
+			return fee;
+		}
+		
+		if (this.itemtype == ItemType.CAR) {
+			fee += 1000;
+			if (this.getHighBid() > 50000) {
+				fee += fee * 0.04;
+			}
+			return fee;
+		}
+		else return fee+= 10;
+	}
     
     /* below here are gets and sets */
 	
@@ -159,4 +183,5 @@ public class Auction {
 	public void setBids(ArrayList<Bid> bids) {
 		this.bids = bids;
 	}
+
 }
