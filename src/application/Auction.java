@@ -1,5 +1,7 @@
 package application;
 
+import java.util.ArrayList;
+
 enum AuctionStatus { CREATED, STARTED, CLOSED;
 }
 
@@ -14,6 +16,7 @@ public class Auction {
 	private User highBidder;
 	private AuctionStatus auctionStatus = AuctionStatus.CREATED;
 	private AuctionException auctionException;
+	private ArrayList<Bid> bids = new ArrayList<Bid>();
 	
 	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime) {
 		this.seller = seller;
@@ -41,6 +44,25 @@ public class Auction {
 		this.setAuctionStatus(AuctionStatus.CLOSED);
 	}	
 
+    public boolean addBid(User user, Bid bid) {
+        if ((this.auctionStatus != AuctionStatus.STARTED) || 
+        		(user.getUserName() == this.seller.getUserName()) ||
+        		(!user.isLogged())) {
+                return false; // action not started or seller auto-bid or user not logged
+        }
+                
+        if (bid.getAmount() > this.getHighBid()) {
+        	this.setHighBid(bid.getAmount());
+        	this.setHighBidder(user);
+        	this.bids.add(bid);
+        	return true;
+        }
+        
+        return false;
+    }
+    
+    /* below here are gets and sets */
+	
 	public User getSeller() {
 		return seller;
 	}
@@ -112,6 +134,12 @@ public class Auction {
 	public void setAuctionException(AuctionException auctionException) {
 		this.auctionException = auctionException;
 	}
+    
+	public ArrayList<Bid> getBids() {
+		return bids;
+	}
 
-	
+	public void setBids(ArrayList<Bid> bids) {
+		this.bids = bids;
+	}
 }

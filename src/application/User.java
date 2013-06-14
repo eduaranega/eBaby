@@ -24,6 +24,8 @@ public class User {
 		return new User(firstName, lastName, userEmail, userName, password);
 	}
 
+	/* below here are gets and sets */
+	
 	public String getFirstName() {
 		return firstName;
 	}
