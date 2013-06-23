@@ -2,6 +2,6 @@ package application;
 
 public abstract class LuxuryFee {
 	
-	public abstract double calculateLuxFee(double fee);
+	public abstract double calculateLuxuryFee(double fee);
 
 }

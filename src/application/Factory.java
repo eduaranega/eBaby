@@ -4,10 +4,10 @@ public class Factory  {
 	
 	public static Notification getNotification(Auction auction) {
 		if (auction.bids.size() == 0)
-			return new NotifyNoWinner();
+			return new NotificationNoWinner();
 		else 
-			return new NotifyWinner();		
-		}
+			return new NotificationWinner();
+	}
 	
 	public static ShippingFee calculateShippingFee(Auction auction) {
 		if (auction.itemtype==ItemType.CAR)
@@ -18,7 +18,7 @@ public class Factory  {
 			return new ShippingFeeOther();
 		}
 	
-	public static LuxuryFee calculateLuxFee(Auction auction) {
+	public static LuxuryFee calculateLuxuryFee(Auction auction) {
 		if (auction.itemtype==ItemType.CAR && auction.getHighBid()>50000)
 			return new LuxuryFeeCar();
 		else

@@ -13,13 +13,12 @@ public class Auction {
 	
 	private User seller;
 	private String itemDescription;
-	
 	private double highBid;
 	private long startTime;
 	private long endTime;
 	private User highBidder;
 	private AuctionStatus auctionStatus = AuctionStatus.CREATED;
-	private AuctionException auctionException;
+	private AuctionException auctionException = null;
 	public ArrayList<Bid> bids = new ArrayList<Bid>();
 	PostOffice postOffice;
 	Notification notification;
@@ -28,10 +27,10 @@ public class Auction {
 	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime, ItemType itemtype) {
 		this.seller = seller;
         if(!this.seller.isSeller()) {
-        	AuctionException.getInstance("Only registered sellers can create new auctions");
+        	throw this.auctionException = AuctionException.getInstance("Only registered sellers can create new auctions");
         }
         if(!this.seller.isLogged()) {
-        	AuctionException.getInstance("In order to create a new auction you need to log in");
+        	throw this.auctionException = AuctionException.getInstance("In order to create a new auction you need to log in");
         }
 		this.itemDescription = itemDescription;
 		this.highBid = highBid;
@@ -54,14 +53,15 @@ public class Auction {
 		notification = Factory.getNotification(this);
 		notification.notify(this);
 		
-		if (notification instanceof NotifyNoWinner) {
+		if (notification instanceof NotificationNoWinner) {
 			this.setAuctionStatus(AuctionStatus.CLOSED);
 			return false;
 		}
-		else if (notification instanceof NotifyWinner) {
+		else if (notification instanceof NotificationWinner) {
 			this.setAuctionStatus(AuctionStatus.CLOSED);
 			return true;
-		}		
+		}
+		
 		return false;
 	}	
 
@@ -91,8 +91,8 @@ public class Auction {
 		ShippingFee sf=Factory.calculateShippingFee(this);
 		fee=sf.calculateShippingFee(fee);
 		// call Factory to get a LuxuryFee instance
-		LuxuryFee lf=Factory.calculateLuxFee(this);
-		fee=lf.calculateLuxFee(fee);
+		LuxuryFee lf=Factory.calculateLuxuryFee(this);
+		fee=lf.calculateLuxuryFee(fee);
 		return fee;
 		
 		/* code before re-factory

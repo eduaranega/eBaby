@@ -1,10 +1,15 @@
 package application;
 
 
-public class AuctionException  {
+public class AuctionException extends IllegalStateException{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private AuctionException(String message) {
-		throw new IllegalStateException(message);
+		 new IllegalStateException(message);
 	}
 
 	public static AuctionException getInstance(String message) {

@@ -1,6 +1,6 @@
 package application;
 
-public class NotifyWinner extends Notification {
+public class NotificationWinner extends Notification {
 	
 	public void notify(Auction auction) {
 		postoffice.sendEMail(auction.getSeller().getUserEmail(), "Your item " + auction.getItemDescription() + " auction sold to bidder " + auction.getHighBidder().getUserName() + " for " + auction.getHighBid() + ".");

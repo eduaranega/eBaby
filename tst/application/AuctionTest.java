@@ -11,26 +11,31 @@ public class AuctionTest {
 		
 		private Auction auction, auction_car, auction_sw;
 		private User user, user2, user3;
-		private Bid bid, bid2, bid3, bid4;
+		private Bid bid, bid2, bid3, bid4, bid5;
 	
 	    @Before
 	    public void setup() {
 	    	
+	    	// Create a dummy user which is also a seller and is logged in the eBaby system
 	    	user = User.getInstance("dummy", "Dummy", "dummy@yahoo.com", "dummyid", "dummypasswd");
 	    	user.setSeller(true);
 	    	user.setLogged(true);
 	    	
+	    	// Create 3 different Auctions to be used during the tests
 	        auction = Auction.getInstance(user,"Atari 2600",100.00,06132013,06142013,ItemType.OTHER);
 	        auction_car = Auction.getInstance(user,"Corolla",15000.00,06132013,06142013,ItemType.CAR);
 	        auction_sw = Auction.getInstance(user,"Game",50.00,06132013,06142013,ItemType.DOWNLOAD_SW);
-	        
-	        bid = Bid.getInstance(user, 95, 06132013);
-	        bid2 = Bid.getInstance(user, 20000, 06132013);
-	        bid3 = Bid.getInstance(user, 30000, 06132013);
-	        bid4 = Bid.getInstance(user, 51000, 06132013);
-	    	
+	        	    	
+	        // Create 2 additional users
 	        user2 = User.getInstance("dummy2", "Dummy2", "dummy2@yahoo.com", "dummy2id", "dummy2passwd");
 	    	user3 = User.getInstance("dummy3", "Dummy3", "dummy3@yahoo.com", "dummy3id", "dummy3passwd");
+	        
+	    	// Create some Bids to be used during the tests
+	        bid = Bid.getInstance(user2, 95, 06132013);
+	        bid2 = Bid.getInstance(user2, 20000, 06132013);
+	        bid3 = Bid.getInstance(user3, 30000, 06132013);
+	        bid4 = Bid.getInstance(user3, 51000, 06132013);
+	        bid5 = Bid.getInstance(user2, 105, 06132013);
 	    }
 	    
 	    @Test
@@ -43,13 +48,13 @@ public class AuctionTest {
 	    	assertTrue(auction.getEndTime() == 06142013);
 		}
 	    
-	    @Test(expected=IllegalStateException.class) 
+	    @Test (expected=IllegalStateException.class)
 	    public void testCantCreateAuctionIfUserNotSeller() {
 	    	// this test will throw an exception because the user is not a registered seller
 	    	user.setSeller(false);
-	    	auction = Auction.getInstance(user,"Atari 2600",100.00,06132013,06142013,ItemType.OTHER);
+	    	auction = Auction.getInstance(user2,"Atari 2600",100.00,06132013,06142013,ItemType.OTHER);
 	    }
-	    
+	    	    
 	    @Test(expected=IllegalStateException.class)
 	    public void testCantCreateAuctionIfSellerNotLoggedIn() {
 	    	// this test will throw an exception because the user is not logged in
@@ -67,19 +72,24 @@ public class AuctionTest {
 	    public void testOnClose() {
 	    	auction.onClose();
 	    	assertEquals(auction.getAuctionStatus(), AuctionStatus.CLOSED);
-	    	
+	    }
+	    
+	    @Test
+	    public void testOnCloseWithNoWinner() {    	
 	    	auction.setAuctionStatus(AuctionStatus.STARTED);
 	    	auction.bids.clear();
 	    	assertFalse(auction.onClose()); // zero bids
-	    	
+	    }
+	    
+	    @Test
+	    public void testOnCloseWithWinner() {
 	    	auction.setAuctionStatus(AuctionStatus.STARTED);
 	    	bid.setAmount(105);
 	    	user2.setLogged(true);
 	    	auction.addBid(user2,bid);
 	    	assertTrue(auction.onClose()); // sold
-	    	
 	    }
-	    
+	    	    
 	    @Test
 	    public void testAddBid() {
 	    	assertFalse(auction.addBid(user, bid));  // auction not started
@@ -96,7 +106,7 @@ public class AuctionTest {
 	    public void testCalculateFeeCarsUnder50000() {
 	    	auction_car.onStart();
 	    	user2.setLogged(true);
-	    	auction_car.addBid(user2, bid2);
+	    	auction_car.addBid(user2, bid2); // 20000
 	    	auction_car.addBid(user2, bid3); // 30000
 	    	auction_car.onClose();
 	    	double fee = auction_car.calculateFee();
@@ -109,21 +119,30 @@ public class AuctionTest {
 	    	user2.setLogged(true);
 	    	user3.setLogged(true);
 	    	auction_car.addBid(user2, bid3); // 30000
-	    	auction_car.addBid(user3, bid4); // 50000
+	    	auction_car.addBid(user3, bid4); // 51000
 	    	auction_car.onClose();
 	    	double fee = auction_car.calculateFee();
 	    	assertTrue(fee == 55140.8);
 	    }
 	    
 	    @Test
-	    public void testDownloadSW() {
+	    public void testCalculateFeeDownloadSW() {
 	    	auction_sw.onStart();
 	    	user2.setLogged(true);
 	    	auction_sw.addBid(user2, bid); // 95
 	    	auction_sw.onClose();
 	    	double fee = auction_sw.calculateFee();
 	    	assertTrue(fee == 96.9);
-	    	
+	    }
+	    
+	    @Test
+	    public void testCalculateFeeOther() {
+	    	auction.onStart();
+	    	user2.setLogged(true);
+	    	auction.addBid(user2, bid5); // 105
+	    	auction.onClose();
+	    	double fee = auction.calculateFee();
+	    	assertTrue(fee == 117.1);
 	    }
 	    
 	    @Test
