@@ -1,19 +1,21 @@
 package application;
 
+import java.util.Date;
+
 
 public class Bid {
 
     private User bidder;
-    private long bidTime;
+    private Date bidTime;
     private double amount;
 
-    private Bid(User bidder, double amount, long bidTime) {
+    private Bid(User bidder, double amount, Date bidTime) {
             this.bidder = bidder;
             this.amount = amount;
             this.bidTime = bidTime;
     }
     
-    public static Bid getInstance(User bidder, double amount, long bidTime) {
+    public static Bid getInstance(User bidder, double amount, Date bidTime) {
     	return new Bid(bidder, amount, bidTime);
     }
 
@@ -27,11 +29,11 @@ public class Bid {
 		this.bidder = bidder;
 	}
 
-	public long getBidTime() {
+	public Date getBidTime() {
 		return bidTime;
 	}
 
-	public void setBidTime(long bidTime) {
+	public void setBidTime(Date bidTime) {
 		this.bidTime = bidTime;
 	}
 

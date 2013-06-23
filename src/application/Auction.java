@@ -1,6 +1,8 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Date;
+
 import com.tobeagile.training.ebaby.services.PostOffice;
 
 enum AuctionStatus { CREATED, STARTED, CLOSED;
@@ -14,8 +16,8 @@ public class Auction {
 	private User seller;
 	private String itemDescription;
 	private double highBid;
-	private long startTime;
-	private long endTime;
+	private Date startTime;
+	private Date endTime;
 	private User highBidder;
 	private AuctionStatus auctionStatus = AuctionStatus.CREATED;
 	private AuctionException auctionException = null;
@@ -24,7 +26,7 @@ public class Auction {
 	Notification notification;
 	public ItemType itemtype;
 	
-	private Auction(User seller, String itemDescription, double highBid, long startTime, long endTime, ItemType itemtype) {
+	private Auction(User seller, String itemDescription, double highBid, Date startTime, Date endTime, ItemType itemtype) {
 		this.seller = seller;
         if(!this.seller.isSeller()) {
         	throw this.auctionException = AuctionException.getInstance("Only registered sellers can create new auctions");
@@ -39,7 +41,7 @@ public class Auction {
 		this.itemtype = itemtype;
 	}
 	
-	public static Auction getInstance(User seller, String itemDescription, double highBid, long startTime, long endTime, ItemType itemtype) {
+	public static Auction getInstance(User seller, String itemDescription, double highBid, Date startTime, Date endTime, ItemType itemtype) {
 		return new Auction(seller, itemDescription, highBid, startTime, endTime, itemtype);
 	}
 	
@@ -112,7 +114,7 @@ public class Auction {
 		else return fee+= 10;*/
 	}
 	
-	public boolean logSales(){
+	public boolean logSales() {
 		Logger l=Factory.logSales(this);
 		return l.logSales(this);
 		
@@ -131,8 +133,7 @@ public class Auction {
 		return false;*/
 	}
 	
-	public String buildMessage()
-	{
+	public String buildMessage() {
 		String temp="";
 		temp+="Seller:"+seller.getUserName()+" Item Name:"+itemDescription;
 		temp+=" Amount:"+highBid+" High Bidder:"+highBidder.getUserName();
@@ -165,19 +166,19 @@ public class Auction {
 		this.highBid = highBid;
 	}
 
-	public long getStartTime() {
+	public Date getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(long startTime) {
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
-	public long getEndTime() {
+	public Date getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(long endTime) {
+	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
 
