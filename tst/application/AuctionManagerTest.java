@@ -1,7 +1,9 @@
 package application;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 import java.util.Date;
 
@@ -10,7 +12,7 @@ import org.junit.Test;
 
 public class AuctionManagerTest {
 
-	private Auction auction, auction2;
+	private Auction auction;
 	private AuctionManager auctionManager, mockAuctionManager;
 	private User user;
     private Date startTime = new Date();
@@ -23,7 +25,8 @@ public class AuctionManagerTest {
     	user.setLogged(true);
     	auction = Auction.getInstance(user,"Atari 2600",100.00,startTime,endTime,ItemType.OTHER);
     	auctionManager = AuctionManager.getInstance();
-       	mockAuctionManager = mock(AuctionManager.class);
+    	mockAuctionManager = mock(AuctionManager.class);
+
     }
     
     
@@ -46,27 +49,30 @@ public class AuctionManagerTest {
     	assertEquals(auction.getAuctionStatus(), AuctionStatus.CLOSED);
     }
     
+  
     @Test
-    public void testHandleAuctionEvents() {
+    public void testAuctionsStartClose() {
     	
         long currentTime = System.currentTimeMillis();
         long start = currentTime - 1000;
         long end = currentTime;
         Date AuctionStartTime = new Date(start);
         Date AuctionEndTime = new Date(end);
-
-        auction2 = Auction.getInstance(user,"Atari 2600",100.00,AuctionStartTime,AuctionEndTime,ItemType.OTHER);
-        		
-        mockAuctionManager.auctionStart(auction2);
-    	try {
+        
+        auction = Auction.getInstance(user,"Atari 2600",100.00,AuctionStartTime,AuctionEndTime,ItemType.OTHER);
+        /*        
+        mockAuctionManager.auctionStart(auction);
+    	
+        try {
     	    Thread.sleep(1000);
     	} catch(InterruptedException ex) {
     	    Thread.currentThread().interrupt();
     	}
-    	mockAuctionManager.auctionClose(auction);
+    	mockAuctionManager.auctionClose(auction2);
     	
-    	
-
+    	assertTrue(mockAuctionManager.containsAuction(auction));
+    	*/
+   	
     }
     
 }

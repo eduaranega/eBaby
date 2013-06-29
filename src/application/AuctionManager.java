@@ -1,6 +1,7 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.tobeagile.training.ebaby.services.AuctionTimer;
@@ -42,8 +43,18 @@ public class AuctionManager implements Auctionable {
 
 	@Override
 	public void handleAuctionEvents(long now) {
-		// TODO Auto-generated method stub
 		
+        Date currentDate = new Date();
+
+        for (Auction auction : auctionList) {
+                if ((auction.getAuctionStatus() == AuctionStatus.CREATED) && currentDate.after(auction.getStartTime())) {
+                        auctionStart(auction);
+                }
+
+                if ((auction.getAuctionStatus() == AuctionStatus.STARTED) && currentDate.after(auction.getEndTime())) {
+                        auctionClose(auction);
+                }
+        }
 	}
 	
 	

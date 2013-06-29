@@ -3,8 +3,7 @@ package application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Date;
 
@@ -22,6 +21,8 @@ public class AuctionTest {
 	    private Date startTime = new Date();
 	    private Date endTime = new Date();
 	    private Date bidTime = new Date();
+	    
+	    private OffHours offHours;
 	   	
 	    @Before
 	    public void setup() {
@@ -47,6 +48,8 @@ public class AuctionTest {
 	        bid4 = Bid.getInstance(user3, 51000, bidTime);
 	        bid5 = Bid.getInstance(user2, 105, bidTime);
 	        
+	        offHours = mock(OffHours.class); 
+	        reset(offHours);
 	    }
 	    
 	    @Test
@@ -186,17 +189,28 @@ public class AuctionTest {
 	    }
 	    
 	   @Test
-	    public void testLogOffHours() {
-	    	
-	    	OffHours offHours = mock(OffHours.class);
+	   public void testLogOffHours() {
+		   
 	        when(offHours.isOffHours()).thenReturn(true);
-	        
+
 	        auction.onStart();
 	        user2.setLogged(true);
-	    	auction.addBid(user2, bid5); // 105
+	    	auction.addBid(user2, bid5);
 	        auction.onClose();   
 
 	        assertTrue(auction.logOffHours() instanceof LoggerOffHours);
-	    		    	
-	    }   	    
+	    }   
+	   
+	   @Test
+	   public void testLogPeakHours() {
+		   
+	        when(offHours.isOffHours()).thenReturn(false);
+
+	        auction.onStart();
+	        user2.setLogged(true);
+	    	auction.addBid(user2, bid5);
+	        auction.onClose();   
+
+	        assertTrue(auction.logOffHours() instanceof LoggerPeakHours);	    		    	
+	    } 
 }
