@@ -46,10 +46,13 @@ public class Auction {
 	}
 	
 	public void onStart() {
-		this.setAuctionStatus(AuctionStatus.STARTED);	
+		this.setAuctionStatus(AuctionStatus.STARTED);
+		//auctionTimer.start();
 	}
 	
 	public boolean onClose() {
+		
+		//auctionTimer.stop();
 		
 		// call Factory to get a new Notification instance
 		notification = Factory.getNotification(this);
@@ -131,6 +134,13 @@ public class Auction {
 			return al.findMessage("10kSales.txt", buildMessage());
 		}
 		return false;*/
+	}
+	
+	
+	public Logger logOffHours(){
+		Logger l=Factory.logOffHours(this);
+		l.logSales(this);
+		return l;
 	}
 	
 	public String buildMessage() {

@@ -3,11 +3,15 @@ package application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.tobeagile.training.ebaby.services.OffHours;
 
 public class AuctionTest {
 		
@@ -18,7 +22,7 @@ public class AuctionTest {
 	    private Date startTime = new Date();
 	    private Date endTime = new Date();
 	    private Date bidTime = new Date();
-	
+	   	
 	    @Before
 	    public void setup() {
 	    	
@@ -42,6 +46,7 @@ public class AuctionTest {
 	        bid3 = Bid.getInstance(user3, 30000, bidTime);
 	        bid4 = Bid.getInstance(user3, 51000, bidTime);
 	        bid5 = Bid.getInstance(user2, 105, bidTime);
+	        
 	    }
 	    
 	    @Test
@@ -152,7 +157,7 @@ public class AuctionTest {
 	    }
 	    
 	    @Test
-	    public void testLogCarSales(){
+	    public void testLogCarSales() {
 	    	auction_car.onStart();
 	    	user2.setLogged(true);
 	    	auction_car.addBid(user2, bid2);
@@ -163,7 +168,7 @@ public class AuctionTest {
 	    }
 	    	    
 	    @Test
-	    public void testLogSalesOver10k(){
+	    public void testLogSalesOver10k() {
 	    	auction_sw.onStart();
 	    	user2.setLogged(true);
 	    	auction_sw.addBid(user2, bid2);
@@ -174,10 +179,24 @@ public class AuctionTest {
 	    }
 	    
 	    @Test
-	    public void testLogNoSales(){
+	    public void testLogNoSales() {
 	    	auction.onStart();
 	    	auction.onClose();
 	    	assertFalse(auction.logSales());
 	    }
 	    
+	   @Test
+	    public void testLogOffHours() {
+	    	
+	    	OffHours offHours = mock(OffHours.class);
+	        when(offHours.isOffHours()).thenReturn(true);
+	        
+	        auction.onStart();
+	        user2.setLogged(true);
+	    	auction.addBid(user2, bid5); // 105
+	        auction.onClose();   
+
+	        assertTrue(auction.logOffHours() instanceof LoggerOffHours);
+	    		    	
+	    }   	    
 }

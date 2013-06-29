@@ -1,5 +1,7 @@
 package application;
 
+import com.tobeagile.training.ebaby.services.OffHours;
+
 public class Factory  {
 	
 	public static Notification getNotification(Auction auction) {
@@ -34,7 +36,14 @@ public class Factory  {
 		}
 		else
 			return new LoggerOtherSales();
-		
+	}
+	
+	public static Logger logOffHours(Auction auction){
+		OffHours offhours=OffHours.getInstance();
+		if(offhours.isOffHours())
+			return new LoggerOffHours();
+		else
+			return new LoggerPeakHours();
 	}
 	
 	

@@ -44,7 +44,7 @@ public class UsersTest {
 			assertFalse(users.logOut(user.getUserName())); // user not found
 			users.registerUser(user);
 			users.logIn(user.getUserName(),user.getPassword());
-			assertTrue(users.logOut(user.getUserName())); // user logged out
+			assertTrue(users.logOut(user.getUserName())); // user logged out		
 		}
 	
 }

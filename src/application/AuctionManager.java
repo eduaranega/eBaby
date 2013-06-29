@@ -1,15 +1,15 @@
 package application;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class AuctionManager {
+import com.tobeagile.training.ebaby.services.AuctionTimer;
+import com.tobeagile.training.ebaby.services.Auctionable;
+
+public class AuctionManager implements Auctionable {
 	
     private List<Auction> auctionList;
-    private Timer timer;
+    private AuctionTimer auctionTimer;
 
     private AuctionManager() {
     	this.auctionList = new ArrayList<Auction>();
@@ -27,37 +27,24 @@ public class AuctionManager {
         return auctionList.contains(auction);
     }
     
-    public void startAuction(Auction auction) {
+    public void auctionStart(Auction auction) {
+        
+        auctionTimer = new AuctionTimer();
+        auctionTimer.start();
         auction.onStart();
     }
     
-    public void endAuction(Auction auction) {
-        auction.onClose();
+    public void auctionClose(Auction auction) {
         auction.logSales();
+        auction.onClose();
+        auctionTimer.stop();
     }
-        
-	public void timerStart() {
-		timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() { public void run() { timerTick(); } }, 100, 100 );
+
+	@Override
+	public void handleAuctionEvents(long now) {
+		// TODO Auto-generated method stub
+		
 	}
-
-	public void timerStop() {
-		timer.cancel();
-	}
-
-   public void timerTick() {
-        Date currentDate = new Date();
-        for (Auction auction : auctionList) {
-        	
-                if ((auction.getAuctionStatus() == AuctionStatus.CREATED) 
-                		&& currentDate.after(auction.getStartTime())) {
-                        	startAuction(auction);
-                }
-
-                if ((auction.getAuctionStatus() == AuctionStatus.STARTED) 
-                		&& currentDate.after(auction.getEndTime())) {
-                        	endAuction(auction);
-                }
-        }
-    }
+	
+	
 }
