@@ -60,7 +60,7 @@ public class AuctionManagerTest {
         Date AuctionEndTime = new Date(end);
         
         auction = Auction.getInstance(user,"Atari 2600",100.00,AuctionStartTime,AuctionEndTime,ItemType.OTHER);
-        /*        
+                
         mockAuctionManager.auctionStart(auction);
     	
         try {
@@ -68,10 +68,10 @@ public class AuctionManagerTest {
     	} catch(InterruptedException ex) {
     	    Thread.currentThread().interrupt();
     	}
-    	mockAuctionManager.auctionClose(auction2);
+    	mockAuctionManager.auctionClose(auction);
     	
     	assertTrue(mockAuctionManager.containsAuction(auction));
-    	*/
+    	
    	
     }
     
